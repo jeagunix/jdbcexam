@@ -12,13 +12,37 @@ public class RoleDao {
 	private static String dburl = "jdbc:mysql://localhost:3306/connectdb?useSSL=false";
 	private static String dbUser = "root";
 	private static String dbpasswd = "1111";
+	
+	public int addRole(Role role) {
+		int insertCount = 0;
 
+		try {
+			Class.forName("com.mysql.jdbc.Driver");
+		} catch (ClassNotFoundException e) {
+			e.printStackTrace();
+		}
+		String sql = "INSERT INTO role (role_id, description) VALUES ( ?, ? )";
+
+		try (Connection conn = DriverManager.getConnection(dburl, dbUser, dbpasswd);
+				PreparedStatement ps = conn.prepareStatement(sql)) {
+
+			ps.setInt(1, role.getRoleId());
+			ps.setString(2, role.getDescription());
+
+			insertCount = ps.executeUpdate();
+
+		} catch (Exception ex) {
+			ex.printStackTrace();
+		}
+		return insertCount;
+	}
+	
 	public Role getRole(Integer roleId) {
 		Role role = null;
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
-
+		
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
 			conn = DriverManager.getConnection(dburl, dbUser, dbpasswd);
